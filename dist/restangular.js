@@ -1196,7 +1196,7 @@ restangular.provider('Restangular', function() {
         };
 
         var errorCallback = function(response) {
-          if (response.status === 304 && config.isSafe(operation)) {
+          if (response && response.status === 304 && config.isSafe(operation)) {
             resolvePromise(deferred, response, __this, filledObject);
           } else if ( _.every(config.errorInterceptors, function(cb) { return cb(response, deferred, okCallback) !== false; }) ) {
             // triggered if no callback returns false
