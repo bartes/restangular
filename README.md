@@ -1,7 +1,7 @@
 #Restangular
 
 [![Build Status](https://travis-ci.org/mgonto/restangular.svg?branch=master)](https://travis-ci.org/mgonto/restangular)
-[![PayPayl donate button](http://img.shields.io/paypal/donate.png?color=yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=martin%40gon%2eto&lc=US&item_name=Martin%20Gontovnikas&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted "Donate once-off to this project using Paypal")
+[![PayPayl donate button](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=martin%40gon%2eto&lc=US&item_name=Martin%20Gontovnikas&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted "Donate once-off to this project using Paypal")
 [![Donate on Gittip](http://img.shields.io/gittip/mgonto.svg)](https://www.gittip.com/mgonto/)
 <a href="https://twitter.com/intent/tweet?hashtags=&original_referer=http%3A%2F%2Fgithub.com%2F&text=Check+out+Restangular%2C+a+service+for+%23AngularJS+that+makes+it+easy+to+use+Rest+APIs&tw_p=tweetbutton&url=https%3A%2F%2Fgithub.com%2Fmgonto%2Frestangular" target="_blank">
   <img src="http://jpillora.com/github-twitter-button/img/tweet.png"></img>
@@ -332,7 +332,7 @@ Restangular comes with defaults for all of its properties but you can configure 
 You can set all these configurations in **`RestangularProvider` or `Restangular` service to change the global configuration** or you can **use the withConfig method in Restangular service to create a new Restangular service with some scoped configuration**. Check the section on this later.
 
 #### setBaseUrl
-The base URL for all calls to your API. For example if your URL for fetching accounts is http://example.com/api/v1/accounts, then your baseUrl is `/api/v1`. The default baseUrl is an empty string which resolves to the same url that AngularJS is running, so you can also set an absolute url like `http://api.example.com/api/v1` if you need do set another domain.
+The base URL for all calls to your API. For example if your URL for fetching accounts is http://example.com/api/v1/accounts, then your baseUrl is `/api/v1`. The default baseUrl is an empty string which resolves to the same url that AngularJS is running, but you can also set an absolute url like `http://api.example.com/api/v1` if you need to set another domain.
 
 #### setExtraFields
 These are the fields that you want to save from your parent resources if you need to display them. By default this is an Empty Array which will suit most cases
@@ -476,8 +476,11 @@ All of these fields except for `id` and `selfLink` are handled by Restangular, s
 You can now Override HTTP Methods. You can set here the array of methods to override. All those methods will be sent as POST and Restangular will add an X-HTTP-Method-Override header with the real HTTP method we wanted to do.
 
 #### setJsonp
+Typical web browsers prohibit requesting data from a server in a different domain (same-origin policy). JSONP or "JSON with padding" is a communication technique used in JavaScript programs running in web browsers to get around this.
 
-By setting this value to true, both `get` and `getList` will be performed using JSonp instead of the regular GET.
+For JSONP to work, a server must know how to reply with JSONP-formatted results. JSONP does not work with JSON-formatted results. The JSONP parameters passed as arguments to a script are defined by the server.
+
+By setting the value of setJsonp to true, both `get` and `getList` will be performed using JSonp instead of the regular GET.
 
 You will need to add the 'JSON_CALLBACK' string to your URLs (see [$http.jsonp](http://docs.angularjs.org/api/ng.$http#methods_jsonp)). You can use `setDefaultRequestParams` to accomplish this:
 ```javascript
@@ -765,6 +768,7 @@ These are the methods that can be called on the Restangular object.
 * **customDELETE(path, [params, headers])**: Does a DELETE to the specific path. Optionally you can set params and headers.
 * **customPOST([elem, path, params, headers])**: Does a POST to the specific path. Optionally you can set params and headers and elem. Elem is the element to post. If it's not set, it's assumed that it's the element itself from which you're calling this function.
 * **customPUT([elem, path, params, headers])**: Does a PUT to the specific path. Optionally you can set params and headers and elem. Elem is the element to post. If it's not set, it's assumed that it's the element itself from which you're calling this function.
+* **customPATCH([elem, path, params, headers])**: Does a PATCH to the specific path. Accepts the same arguments as customPUT.
 * **customOperation(operation, path, [params, headers, elem])**: This does a custom operation to the path that we specify. This method is actually used from all the others in this subsection. Operation can be one of: get, post, put, remove, head, options, patch, trace
 * **addRestangularMethod(name, operation, [path, params, headers, elem])**: This will add a new restangular method to this object with the name `name` to the operation and path specified (or current path otherwise). There's a section on how to do this later.
 
@@ -1161,14 +1165,14 @@ With that, you'd get what you need :)
 
 #### **How can I send files in my request using Restangular?**
 
-This can be done using the customPOST / customPUT method. Look at the following example: 
+This can be done using the customPOST / customPUT method. Look at the following example:
 ````js
 Restangular.all('users')
           .withHttpConfig({transformRequest: angular.identity})
-          .customPOST(formData, undefined, undefined, 
+          .customPOST(formData, undefined, undefined,
             { 'Content-Type': undefined });
 ````
-This basically tells the request to use the *Content-Type: multipart/form-data* as the header. Also *formData* is the body of the request, be sure to add all the params here, including the File you want to send of course. There is an issue already closed but with a lot of information from other users and @mgonto as well: [GitHub - Restangular](https://github.com/mgonto/restangular/issues/420) 
+This basically tells the request to use the *Content-Type: multipart/form-data* as the header. Also *formData* is the body of the request, be sure to add all the params here, including the File you want to send of course. There is an issue already closed but with a lot of information from other users and @mgonto as well: [GitHub - Restangular](https://github.com/mgonto/restangular/issues/420)
 
 #### **How do I handle CRUD operations in a List returned by Restangular?**
 
